@@ -1,0 +1,9 @@
+theme: jekyll-theme-primer
+title: Yelper Helper!
+description: Predicting Restaurant Ratings
+baseurl:
+markdown: kramdown
+kramdown:
+    math_engine: mathjax
+    input: GFM
+    syntax_highlighter: rouge
