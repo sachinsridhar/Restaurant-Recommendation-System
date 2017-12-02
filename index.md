@@ -2,14 +2,10 @@
 title: Yelper Helper! - Predicting Restaurant Ratings
 ---
 
-This is the home page
+## Problem Statement
 
-## Lets have fun
+>You will create a recommendation system for restaurants using regression, matrix factorization, and something else of your choice, and combine them using an ensemble method. At each point you will see if your model’s performance improves. The recommenders will not be particularly good or sophisticated, but you should carry out the entire process and on the way, you’ll learn a lot about the gotchas and subtleties involved.
 
->here is a quote
+In particular, we have developed a recommendation system for restaurants in Yelp's academic dataset in Ontario and Quebec, Canada. 
 
-Here is *emph* and **bold**.
-
-Here is some inline math $\alpha = \frac{\beta}{\gamma}$ and, of-course, E rules:
-
-$$ G_{\mu\nu} + \Lambda g_{\mu\nu}  = 8 \pi T_{\mu\nu} . $$
+![png](Other_files/canada_map.png)
