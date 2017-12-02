@@ -10,25 +10,10 @@ nav_include: 1
 {: toc}
 
 
-```python
-import pandas as pd
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-import seaborn.apionly as sns
-%matplotlib inline
-sns.set_context("notebook")
-```
 
 
 
 
-```python
-path = "/Users/eesmalling/Data/project121/"
-bns = pd.read_csv(path+"business_edit.csv").iloc[:,1:]
-usr = pd.read_csv(path+"user_edit.csv").iloc[:,1:]
-rvw = pd.read_csv(path+"review_edit.csv").iloc[:,1:]
-```
 
 
 ## The Dataset
@@ -136,7 +121,7 @@ pd.DataFrame(dict(max_reviews = thresh, percent_total = prop)).transpose()
 
 
 
-## User
+### User
 The user data table consists of 823317 unique users who have reviewed restaurants in the dataset. We see below that, with the exception of a few “power users” that write hundreds of reviews, most users only choose to review restaurants on occasion. For example, 60% of users wrote 10 or fewer reviews:
 
 
@@ -219,37 +204,11 @@ pd.DataFrame(dict(max_reviews = thresh, pct_total = prop)).transpose()
 
 
 
-## Review
+### Review
 Noting the discrete regions and low review counts per user and restaurant, we sensed that matrix sparsity would be a big challenge while using matrix factorization to build a review prediction model. In the context of this problem, a sparse matrix would occur when there is little overlap in the restaurants that individual users review, while a “perfectly full” matrix would occur if every user in the data set reviewed every restaurant in the dataset. In the table below, for a given region or combination of regions, we see the number of unique users and restaurants with reviews in that region. The total possible ratings is simply the product of the unique users and restaurants, and coverage is the proportion of these ratings that are actually in the dataset. Coverage, then serves as a measure of matrix sparsity, should we limit our analysis to that region.
 
 
 
-```python
-cvg = rvw.merge(bns[['business_id','state']], how='left')
-cvg_u = cvg.groupby('state')['user_id'].nunique().reset_index()
-cvg_b = cvg.groupby('state')['business_id'].nunique().reset_index()
-cvg_s = cvg.groupby('state')['stars'].count().reset_index()
-cvg_all = pd.DataFrame(cvg_u).merge(pd.DataFrame(cvg_b), how='left').merge(pd.DataFrame(cvg_s), how='left')
-cvg_all['mx_size'] = cvg_all.user_id*cvg_all.business_id
-cvg_all['mx_coverage'] = round(cvg_all.stars/cvg_all.mx_size,6)
-cvg_cols = cvg_all.columns
-def state_mx(states, label):
-    temp = cvg[cvg.state.isin(states)]
-    row = pd.DataFrame(dict(state = label,
-                            user_id = temp.user_id.nunique(),
-                            business_id = temp.business_id.nunique(),
-                            stars = len(temp)), index = np.ones(1))
-    row['mx_size'] = row.user_id*row.business_id
-    row['mx_coverage'] = row.stars/row.mx_size
-    return row
-cvg_all = cvg_all.append(state_mx(['IL','WI'], 'IL+WI'))
-cvg_all = cvg_all.append(state_mx(['ON','QC'], 'ON+QC'))
-cvg_all = cvg_all.append(state_mx(['AZ','NV'], 'AZ+NV'))
-cvg_all = cvg_all.append(state_mx(['NC','SC'], 'NC+SC'))
-cvg_all = cvg_all.append(state_mx(cvg.state.unique(), 'ALL STATES'))
-cvg_all = cvg_all.sort_values('mx_coverage')[cvg_cols].reset_index().drop('index', axis=1)
-cvg_all.columns = ['region','unique_users','unique_businesses','total_ratings','possible_ratings','coverage']
-```
 
 
 
