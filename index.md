@@ -8,4 +8,5 @@ title: Yelper Helper! - Predicting Restaurant Ratings
 
 In particular, we have developed a recommendation system for restaurants in Yelp's academic dataset in Ontario and Quebec, Canada. 
 
-![png](Other_files/canada_map.png)
+![png](Other_files/ontario.png)
+![png](Other_files/quebec.png)
