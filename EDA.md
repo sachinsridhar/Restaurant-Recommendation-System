@@ -60,7 +60,7 @@ sns.despine();
 ```python
 thresh = np.array([1,3,5,10,25,100,1000], dtype="int")
 prop = [np.round(np.mean(bns.review_count<=i)*100,2) for i in thresh]
-pd.DataFrame(dict(max_reviews = thresh, percent_total = prop)).transpose()
+pd.DataFrame(dict(percent_total = prop), index=thresh).transpose().rename_axis("max_reviews", axis=1)
 ```
 
 
@@ -84,27 +84,17 @@ pd.DataFrame(dict(max_reviews = thresh, percent_total = prop)).transpose()
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
+      <th>max_reviews</th>
       <th>1</th>
-      <th>2</th>
       <th>3</th>
-      <th>4</th>
       <th>5</th>
-      <th>6</th>
+      <th>10</th>
+      <th>25</th>
+      <th>100</th>
+      <th>1000</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>max_reviews</th>
-      <td>1.0</td>
-      <td>3.00</td>
-      <td>5.00</td>
-      <td>10.00</td>
-      <td>25.00</td>
-      <td>100.00</td>
-      <td>1000.00</td>
-    </tr>
     <tr>
       <th>percent_total</th>
       <td>0.0</td>
@@ -143,7 +133,7 @@ sns.despine();
 ```python
 thresh = [1,3,5,10,25,100,1000]
 prop = [np.round(np.mean(usr.review_count<=i)*100,2) for i in thresh]
-pd.DataFrame(dict(max_reviews = thresh, pct_total = prop)).transpose()
+pd.DataFrame(dict(pct_total = prop), index = thresh).transpose().rename_axis("max_reviews", axis=1)
 ```
 
 
@@ -167,27 +157,17 @@ pd.DataFrame(dict(max_reviews = thresh, pct_total = prop)).transpose()
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
+      <th>max_reviews</th>
       <th>1</th>
-      <th>2</th>
       <th>3</th>
-      <th>4</th>
       <th>5</th>
-      <th>6</th>
+      <th>10</th>
+      <th>25</th>
+      <th>100</th>
+      <th>1000</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>max_reviews</th>
-      <td>1.00</td>
-      <td>3.00</td>
-      <td>5.00</td>
-      <td>10.00</td>
-      <td>25.00</td>
-      <td>100.00</td>
-      <td>1000.00</td>
-    </tr>
     <tr>
       <th>pct_total</th>
       <td>12.74</td>
@@ -626,7 +606,7 @@ cvg_all
 We see that there is a tradeoff between the number of reviews and the sparsity of the matrix: the states at the bottom have full coverage but only a few reviews, while the states/regions at the top have many reviews but a relatively sparse matrix. We also note that matrices encompassing two or more states are necessarily more sparse than those for just one state, as it is rare that a user reviews restaurants in multiple states. In order to make sure that the matrix is not too sparse and to consider a large enough set of reviews, we chose to limit our analysis to Ontario and Quebec, Canada's two most populous provinces. The total number of restaurants in these two provinces make up roughly a third of the total number of restaurants in the dataset, while the resulting matrix would be significantly less sparse than using the entire dataset or the larger Arizona and Nevada region.
 
 ## Cana(data)
-After narrowing our geographic focus to Canada, we then examine predictors in the dataset that may be related to a user's star rating of a restaurant. We see below that while there are is some variation in the distribution of ratings by city, in general the average star rating is aligned across the dataset.
+After narrowing our geographic focus to Canada, we then examine predictors in the dataset that may be related to a user's star rating of a restaurant. We see below that while there is some variation in the distribution of ratings by city, in general the median star rating is aligned across the dataset.
 
 
 
@@ -649,7 +629,7 @@ sns.despine(left=True, bottom=True)
 ![png](EDA_files/EDA_17_0.png)
 
 
-The most common restaurant cuisines also show minor variations in the distributions of star ratings, though their means are also largely aligned (with the exception of fast food and burgers, which have lower average ratings).
+The most common restaurant cuisines also show minor variations in the distributions of star ratings, though their medians are also largely aligned (with the exception of fast food and burgers, which have lower median ratings).
 
 
 
@@ -676,12 +656,6 @@ The previously discussed predictors cannot be incorporated in our baseline model
 
 
 
-
-
-    /anaconda/lib/python3.6/site-packages/ipykernel/__main__.py:9: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame
-    
-    See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
 
 
 
