@@ -624,3 +624,279 @@ cvg_all
 
 
 We see that there is a tradeoff between the number of reviews and the sparsity of the matrix: the states at the bottom have full coverage but only a few reviews, while the states/regions at the top have many reviews but a relatively sparse matrix. We also note that matrices encompassing two or more states are necessarily more sparse than those for just one state, as it is rare that a user reviews restaurants in multiple states. In order to make sure that the matrix is not too sparse and to consider a large enough set of reviews, we chose to limit our analysis to Ontario and Quebec, Canada's two most populous provinces. The total number of restaurants in these two provinces make up roughly a third of the total number of restaurants in the dataset, while the resulting matrix would be significantly less sparse than using the entire dataset or the larger Arizona and Nevada region.
+
+## Cana(data)
+After narrowing our geographic focus to Canada, we then examine predictors in the dataset that may be related to a user's star rating of a restaurant. We see below that while there are is some variation in the distribution of ratings by city, in general the average star rating is aligned across the dataset.
+
+
+
+
+
+
+
+```python
+top = np.array(bns.city.value_counts()[0:10].index)
+temp = bns[bns.city.isin(top)]
+sns.boxplot(y='city', x='stars', data=temp)
+ax = plt.gca()
+ax.tick_params(axis='both', which='both', length=0)
+plt.title('Distribution of star ratings by city')
+sns.despine(left=True, bottom=True)
+```
+
+
+
+![png](EDA_files/EDA_17_0.png)
+
+
+The most common restaurant cuisines also show minor variations in the distributions of star ratings, though their means are also largely aligned (with the exception of fast food and burgers, which have lower average ratings).
+
+
+
+
+
+
+
+```python
+top = np.array(bns.top_category.value_counts()[0:10].index)
+temp = bns[bns.top_category.isin(top)]
+sns.boxplot(y='top_category', x='stars', data=temp)
+ax = plt.gca()
+ax.tick_params(axis='both', which='both', length=0)
+plt.title('Distribution of star ratings by cuisine')
+sns.despine(left=True, bottom=True)
+```
+
+
+
+![png](EDA_files/EDA_20_0.png)
+
+
+The previously discussed predictors cannot be incorporated in our baseline model, as they are perfectly correlated with the individual restaurant, which is already a predictor. Features that don't suffer from this problem could be related to the time when the review was written. For example, we see below that there is little variation in the distribution of the star ratings by day of week that the review was written. However, the means for each day are marginally different, suggesting that there may be some predictive power there.
+
+
+
+
+
+    /anaconda/lib/python3.6/site-packages/ipykernel/__main__.py:9: SettingWithCopyWarning: 
+    A value is trying to be set on a copy of a slice from a DataFrame
+    
+    See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+
+
+
+
+```python
+sns.boxplot(y='stars', x='day', data=rvw)
+ax = plt.gca()
+ax.tick_params(axis='both', which='both', length=0)
+plt.title('Distribution of star ratings by review posting day')
+sns.despine(left=True, bottom=True)
+```
+
+
+
+![png](EDA_files/EDA_23_0.png)
+
+
+
+
+```python
+pd.DataFrame(rvw.groupby('day')['stars'].mean().round(3)).transpose()
+```
+
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>day</th>
+      <th>Friday</th>
+      <th>Monday</th>
+      <th>Saturday</th>
+      <th>Sunday</th>
+      <th>Thursday</th>
+      <th>Tuesday</th>
+      <th>Wednesday</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>stars</th>
+      <td>3.616</td>
+      <td>3.586</td>
+      <td>3.589</td>
+      <td>3.558</td>
+      <td>3.622</td>
+      <td>3.615</td>
+      <td>3.629</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+The result is similar when examining the distribution of star ratings by month in which the review was written: generally similar distributions, but with slightly different mean star ratings that may add value to the model.
+
+
+
+```python
+sns.boxplot(y='month', x='stars', data=rvw)
+ax = plt.gca()
+ax.tick_params(axis='both', which='both', length=0)
+plt.title('Distribution of star ratings by review posting month')
+sns.despine(left=True, bottom=True)
+```
+
+
+
+![png](EDA_files/EDA_26_0.png)
+
+
+
+
+```python
+pd.DataFrame(rvw.groupby('month')['stars'].mean().round(3)).transpose()
+```
+
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>month</th>
+      <th>April</th>
+      <th>August</th>
+      <th>December</th>
+      <th>February</th>
+      <th>January</th>
+      <th>July</th>
+      <th>June</th>
+      <th>March</th>
+      <th>May</th>
+      <th>November</th>
+      <th>October</th>
+      <th>September</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>stars</th>
+      <td>3.62</td>
+      <td>3.595</td>
+      <td>3.582</td>
+      <td>3.619</td>
+      <td>3.621</td>
+      <td>3.588</td>
+      <td>3.598</td>
+      <td>3.619</td>
+      <td>3.595</td>
+      <td>3.584</td>
+      <td>3.594</td>
+      <td>3.582</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+We also can incorporate user behavior into the model by accounting for how long the user had been active on Yelp when the review was written. Again, the relationship is subtle, but we see that both really low and really high reviews tend to be written by less seasoned Yelp users, while moderate reviews have the longest average time active on Yelp.
+
+
+
+```python
+sns.boxplot(y='log_time_yelping', x='stars', data=rvw)
+ax = plt.gca()
+ax.tick_params(axis='both', which='both', length=0)
+plt.title('Distribution of time active by star rating')
+sns.despine(left=True, bottom=True)
+```
+
+
+
+![png](EDA_files/EDA_29_0.png)
+
+
+
+
+```python
+pd.DataFrame(rvw.groupby('stars')['log_time_yelping'].mean().round(3)).transpose()
+```
+
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>stars</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>log_time_yelping</th>
+      <td>5.133</td>
+      <td>5.526</td>
+      <td>5.634</td>
+      <td>5.523</td>
+      <td>5.425</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
