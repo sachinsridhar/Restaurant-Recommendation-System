@@ -26,8 +26,8 @@
 1. Delete the html files in the main `testgpages` folder. We will generate markdown instead
 2. From `gpages` copy the `_layouts` folder, `index.md`, and `_config.yml`.
 3. Using the `testgpages` terminal, convert the notebooks into markdown using our custom template.
-   1. `jupyter nbconvert --output-dir . --to markdown --template ../gpages/_support/markdown.tpl notebooks/olives-eda.ipynb`
-   2. `jupyter nbconvert --output-dir . --to markdown --template ../gpages/_support/markdown.tpl notebooks/olives-model.ipynb`
+   1. `jupyter nbconvert --output-dir . --to markdown --template _support/markdown.tpl notebooks/EDA.ipynb`
+   2. `jupyter nbconvert --output-dir . --to markdown --template _support/markdown.tpl notebooks/Model.ipynb`
 4. Add **YAML** preambles and some TOC frontmatter to our markdown files
    1. `python ../gpages/_support/nbmd.py olives-eda.md` 
    2. `python ../gpages/_support/nbmd.py olives-model.md`
