@@ -438,12 +438,12 @@ result_train.head()
 
 For the final stage of modelling, we sought to create a model that uses additional information about the users or restaurants provided in the dataset. We also engineered several features: day of the week the review was written, month the review was written, length of time the user was active on Yelp when review was written.
 
-For each of the combinations of variables below, we fit a regular regression, a ridge regression, and a random forest regression as some models may be better suited to certain types of problems. We then perform 10-fold cross validation to assess how well the model would perform out of sample:
+We fit an ordinary regression, a ridge regression, and a random forest regression, as some models may be better suited to certain types of problems, for each of the combinations of variables below:
 + Day and month that the review was written, and time user was active on Yelp
 + Restaurant cities as factor variables
 + Latitude and longitude, and their interaction with the state variable
 
-The output for the cross-validation exercise on the the third model, which proved to be the superior one, is displayed below.
+We then perform 10-fold cross validation to assess how well the model would perform out of sample. The output for the cross-validation exercise on the third set of predictors, which proved to be the superior one, is displayed below. The optimal regression technique was the random forest regression.
 
 
 ```python
@@ -482,10 +482,10 @@ for i in depths:
 ```
 
 
-    10-fold CV R2, depth 2 : 0.00102056654732
-    10-fold CV R2, depth 3 : 0.00122405998344
-    10-fold CV R2, depth 5 : 0.000980687489795
-    10-fold CV R2, depth 7 : -0.00131674140843
+    10-fold CV R2, depth 2  : 0.00102056654732
+    10-fold CV R2, depth 3  : 0.00122405998344
+    10-fold CV R2, depth 5  : 0.000980687489795
+    10-fold CV R2, depth 7  : -0.00131674140843
     10-fold CV R2, depth 10 : -0.0082639210523
 
 
