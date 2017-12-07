@@ -239,7 +239,7 @@ We setup to apply the Alternating Least Squares Regression method to accomplish 
 
 $\sum_{u,m}(Y_{u,m} - \mu -\bar{\theta}.I_{u} - \bar{\gamma}I_m-\bar{q}_m^T\bar{p}_u)^2 + \alpha(\theta^2 + \gamma_m^2 + \mid\mid\bar{q}_m\mid\mid^2 + \mid\mid\bar{p}_u\mid\mid^2)$
 
-We perform the process of validation in order to tune the parameters alpha (penalty) and the number of latent factors in the matrix. We arrive at the optimal values of *alpha* and number of latent factors to be considered in the process of factorization by computing the sum of squared errors on the test set. The combinations of values and their sum of squared errors is shown in the table below.
+We perform the process of validation in order to tune the parameters alpha (penalty) and the number of latent factors in the matrix. We arrive at the optimal values of *alpha* and number of latent factors to be considered in the process of factorization by computing the sum of squared errors on the test set. The results are shown in the table below.
 
 
 
@@ -271,7 +271,7 @@ val_scores
       <th></th>
       <th>lambda</th>
       <th>n_factors</th>
-      <th>sum of squared errors</th>
+      <th>test/validation sum of squared errors</th>
     </tr>
   </thead>
   <tbody>
@@ -432,6 +432,7 @@ result_train.head()
 </table>
 </div>
 
+The table above steps us through how the results from Matrix Factorization leads us to the next step - the Random Forest model. We have the residuals calculated at the two steps - Baseline Linear Regression and the Matrix Factorization, the difference of which equals the residuals of the calculated residuals, names resid_of_resid in the table above.
 
 
 ## Random Forest Regression
