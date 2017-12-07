@@ -12,234 +12,26 @@ nav_include: 2
 
 ## Data Wrangling
 
+Data has already been filtered based on geographical location (only restaurants in two states of Canada - Ontario and Quebec - have been selected) and basic data cleaning operations have been carried out on the datasets shared by Yelp.
+
 Based on the results of the EDA and the design decisions made for the analysis, we perform data wrangling, the steps of which have been outlined below -
 1. Eliminate restaurants with a low number of reviews (for reliability of information)
 2. Eliminate users with a low number of restaurant reviews
 3. Perform one-hot encoding for users and restaurants
-4. Split the reviews into three datasets randomly: training, test, and holdout, such that every restaurant is in the training set and that every user is in each dataset
-
-
-
-
-
-Data has already been filtered based on geographical location (only restaurants in two states of Canada - Ontario and Quebec - have been selected) and basic data cleaning operations have been carried out on the datasets shared by Yelp.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>number of reviews (n)</th>
-      <th>number of users with n reviews</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>56926</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>19261</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3</td>
-      <td>9854</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>4</td>
-      <td>6124</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5</td>
-      <td>3969</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>6</td>
-      <td>2763</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>7</td>
-      <td>2091</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>8</td>
-      <td>1633</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>9</td>
-      <td>1234</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>10</td>
-      <td>1018</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>number of reviews (n)</th>
-      <th>number of users with n reviews</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>249</th>
-      <td>545</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>250</th>
-      <td>2139</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-
-
+4. Split the reviews into three datasets randomly: training, test, and holdout, such that every restaurant is in the training set and that every user is in each dataset.
 
 After applying the filters, we see below the dimensions of the dataset that we will perform our analysis on.
-
-
-
-```python
-print('# users with more than 50 reviews (review2): ', np.sum(review2.groupby(['user_id']).size() > 50))
-print('total # users (review2):                     ', len(review2.groupby(['user_id'])))
-print('total # restaurants (review2):               ', len(review2.groupby(['business_id'])))
-print('total # reviews (review2):                   ', len(review2))
-```
-
 
     # users with more than 50 reviews (review2):  1073
     total # users (review2):                      1073
     total # restaurants (review2):                7345
     total # reviews (review2):                    103112
 
-
-
-
-
-
-    total # users (user2):                        1073
-    total # restaurants (business2):              7345
-
-
-The next task is to split the data, and we start by permuting the data. The objective is to make sure that each user is present in every split and that the training set contains every restaurant in review2. This must be done to ensure that we have some information about each user and that the matrix in Part 3 covers all the possibilities. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Since the variables *user_id* and *restaurant_id* are categorical variables, we convert them into their biniarized forms (create indicator variables) for each value taken up by these two variables.
-
-
-
-
-
-
-
-
-
-
-
-```python
-print('size of training set: ', len(train_set))
-print('size of test set:     ', len(test_set))
-print('size of holdout set:  ', len(holdout_set))
-
-compare_data_sets = pd.DataFrame()
-compare_data_sets['training'] = train_set.groupby('user_id').size()
-compare_data_sets['test'] = test_set.groupby('user_id').size()
-compare_data_sets['holdout'] = holdout_set.groupby('user_id').size()
-
-compare_data_sets.head()
-```
-
+The next task is to split the data, and we start by permuting the data. The objective is to make sure that each user is present in every split and that the training set contains every restaurant in review2. This must be done to ensure that we have some information about each user and that the matrix we factorize covers all the possibilities. The resulting size of each split is displayed below, as well as a sample table of occurrences of users in each split.
 
     size of training set:  21154
     size of test set:      14331
     size of holdout set:   67627
-
-
-
 
 
 <div>
@@ -308,18 +100,7 @@ compare_data_sets.head()
 
 
 
-We make two observations from the outputs displayed above. First, we notice the split between the training, test and the hold-out datasets. Second, in the table displayed above, we find a description of how the reviews of each user have been split across the three datasets. It has been ensured that the reviews of a user are well represented in all the three datasets - the training, test and hold-out.
-
-
-
-```python
-print('number of unique users:                           ', len(review2['user_id'].unique()))
-print('number of unique users in the training set:       ', len(train_set['user_id'].unique()))
-print('number of unique users in the test set:           ', len(test_set['user_id'].unique()))
-print('number of unique users in the holdout set:        ', len(holdout_set['user_id'].unique()))
-print('number of unique restaurants:                     ', len(review2['business_id'].unique()))
-print('number of unique restaurants in the training set: ', len(train_set['business_id'].unique()))
-```
+We make two observations from the outputs displayed above. First, we notice the split between the training, test and the hold-out datasets. Second, in the table displayed above, we find a description of how the reviews of each user have been split across the three datasets. It has been ensured that the reviews of a user are well represented in all the three datasets - the training, test and hold-out. This is again comfirmed in the output below.
 
 
     number of unique users:                            1073
@@ -330,15 +111,7 @@ print('number of unique restaurants in the training set: ', len(train_set['busin
     number of unique restaurants in the training set:  7345
 
 
-
-
-
-
-
-
-
-
-
+A sample of the binarized training data set to be used in the baseline regression is displayed below.
 
 
 <div>
@@ -439,8 +212,8 @@ print('number of unique restaurants in the training set: ', len(train_set['busin
 
 
 ## Basline Linear Regression Model
-In the first part of our analysis, we create a baseline estimate of the ratings. We fit the baseline linear regression model, represented mathematically as
-$\hat{Y}_{ur} = \hat{\mu} + \hat{\theta}_u + \hat{\gamma}_r$
+In the first part of our analysis, we create a baseline estimate of the ratings. We fit the baseline linear regression model, represented mathematically as 
+$\hat{Y}_{ur}=\hat{\mu}+\hat{\theta}_u+\hat{\gamma}_r$, 
 where $\hat{\theta}_u$ represents the bias of a particular user, and $\hat{\gamma}_r$ the bias of a particular restaurant.
 
 
@@ -449,19 +222,6 @@ where $\hat{\theta}_u$ represents the bias of a particular user, and $\hat{\gamm
 # Fitting the linear baseline regression model
 regress1 = LinearRegression()
 regress1.fit(train_set_x, train_set_y)
-```
-
-
-
-
-
-    LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
-
-
-
-
-
-```python
 print('test score 1:    ', regress1.score(test_set_x, test_set_y))
 ```
 
@@ -469,7 +229,7 @@ print('test score 1:    ', regress1.score(test_set_x, test_set_y))
     test score 1:     -0.130286650544
 
 
-We notice a poor score for the Test/Validation $R^2$, and hence performed Regulzarized Regression (with Lasso).
+We notice a poor score for the Test/Validation $R^2$, and hence perform Regulzarized Regression (with Lasso).
 
 
 
@@ -477,23 +237,6 @@ We notice a poor score for the Test/Validation $R^2$, and hence performed Regulz
 lambdas = [.00001, .0001, .001,.005,1,5,10,50,100,500,1000]
 regress2 = LassoCV(cv=10, alphas=lambdas)
 regress2.fit(train_set_x, train_set_y)
-```
-
-
-
-
-
-    LassoCV(alphas=[1e-05, 0.0001, 0.001, 0.005, 1, 5, 10, 50, 100, 500, 1000],
-        copy_X=True, cv=10, eps=0.001, fit_intercept=True, max_iter=1000,
-        n_alphas=100, n_jobs=1, normalize=False, positive=False,
-        precompute='auto', random_state=None, selection='cyclic', tol=0.0001,
-        verbose=False)
-
-
-
-
-
-```python
 print('test score 2:    ', regress2.score(test_set_x, test_set_y))
 ```
 
@@ -507,222 +250,7 @@ In contrast to the Linear Regression Model without Regularization, we observe a 
 
 The objective is to create a matrix, which contains residuals from the baseline model on the training dataset. The matrix will have the list of users along its rows and the list of restaurants along its columns.
 
-This will be obtained by pivoting our existing dataframe appropriately. Also, the **matrix is sparse** i.e. most of the matrix values do not exist. We intially fill them in using zeros, and our goal is to find the *'best guess'* for these values through Matrix Factorization using Alternating Least Squares.
-
-In order to perform computations in subsequent steps, we will need to replace the null values. Based on consideration of the Weight Matrix $W$ (explained below), we set these null values to 0. Setting the Null values to zero will not conflict with the calculated residuals, since none of the training residuals has been found to be 0.
-
-
-
-
-
-
-
-
-
-
-
-
-    (21154, 8421)
-
-
-
-
-
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>business_id</th>
-      <th>date</th>
-      <th>stars</th>
-      <th>user_id</th>
-      <th>type</th>
-      <th>user_id_-B4Cf2XLkPr9qMlLPHJAlw</th>
-      <th>user_id_-KVxkJDSTjtPGsamMDG92Q</th>
-      <th>user_id_-KpEgEen1tj-jdjIS7uVOw</th>
-      <th>user_id_-RCD8F7qbsLfzT3k1HtMxg</th>
-      <th>user_id_-_2h2cJlBOWAYrfplMU-Cg</th>
-      <th>...</th>
-      <th>business_id_zw4Legbcu018p5WcZ74iWA</th>
-      <th>business_id_zw74kL1IvT65yRvNLx5UxA</th>
-      <th>business_id_zwkif4XLEDqdEwEgTWLIVQ</th>
-      <th>business_id_zxJlg4XCHNoFy78WZPv89w</th>
-      <th>business_id_zy_NHTqtfSrfTGGPoqy4Mw</th>
-      <th>business_id_zyw5DjrRks7a8OhmBsgCQQ</th>
-      <th>business_id_zz3CqZhNx2rQ_Yp6zHze-A</th>
-      <th>business_id_zze6IysT7bJFS8gvi6fZ2A</th>
-      <th>business_id_zzlZJVkEhOzR2tJOLHcF2A</th>
-      <th>residuals</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2721</th>
-      <td>bRmb81XDG3E2SOHARBLTog</td>
-      <td>2010-08-15</td>
-      <td>4</td>
-      <td>oBc0gQ4RpFrqzpNlH6_epA</td>
-      <td>train</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.455356</td>
-    </tr>
-    <tr>
-      <th>39119</th>
-      <td>X_Pg8SvGGYhCxwWRkrUv3Q</td>
-      <td>2016-01-24</td>
-      <td>4</td>
-      <td>dT1jqOZrFUmY4m4o37c8rw</td>
-      <td>train</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.279164</td>
-    </tr>
-    <tr>
-      <th>49343</th>
-      <td>8xI4hJ3nS4avEoo_l62dkw</td>
-      <td>2010-09-26</td>
-      <td>3</td>
-      <td>qOdmye8UQdqloVNE059PkQ</td>
-      <td>train</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-0.885521</td>
-    </tr>
-    <tr>
-      <th>83548</th>
-      <td>q9_gLvTNf11etVxbH7JY0Q</td>
-      <td>2017-01-26</td>
-      <td>4</td>
-      <td>Jm5h-bDATqRMWs3VahkFPg</td>
-      <td>train</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-0.403760</td>
-    </tr>
-    <tr>
-      <th>52893</th>
-      <td>J9BmILDpV1Pr3GKU9XhjTQ</td>
-      <td>2008-11-27</td>
-      <td>4</td>
-      <td>Yp7_GeD6KTRoo4Nteqv4SA</td>
-      <td>train</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.392325</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 8422 columns</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-    (21154, 8422)
-
-
-
-
-
-
-
-
-
-
-
-    maximum number of reviews for a user-restaurant pair:  1
-
+This will be obtained by pivoting our existing dataframe appropriately. For user/restauraunt combinations not in our training set, we set their values to zero, and our goal is to find the *'best guess'* for these values through Matrix Factorization using Alternating Least Squares. By using an appropriate weight matrix $W$ these values will not be interpreted as actual residuals from reviews in the training set.
 
 The resulting matrix of residuals is seen below. Note the sparsity of the matrix: nearly every value is zero.
 
@@ -930,12 +458,6 @@ df_review.head()
 
 
 
-
-
-
-
-
-
 ```python
 df_review_matrix.shape
 ```
@@ -947,22 +469,13 @@ df_review_matrix.shape
     (1073, 7345)
 
 
-
 We started out with 1073 users and 7345 restaurants in the training dataset, so the dimensions of the matrix seem to be correct.
 
 We setup to apply the Alternating Least Squares Regression method to accomplish matrix factorization. Our objective is to minimize the following loss function:
 
-$\sum_{u,m}(Y_{u,m} - \mu -\bar{\theta}.I_{u} - \bar{\gamma}I_m-\bar{q}_m^T\bar{p}_u)^2 + \alpha(\theta^2 + \gamma_m^2 + ||\bar{q}_m||^2 + ||\bar{p}_u||^2)$
+$\sum_{u,m}(Y_{u,m} - \mu -\bar{\theta}.I_{u} - \bar{\gamma}I_m-\bar{q}_m^T\bar{p}_u)^2 + \alpha(\theta^2 + \gamma_m^2 + \mid\mid\bar{q}_m\mid\mid^2 + \mid\mid\bar{p}_u\mid\mid^2)$
 
 We perform the process of validation in order to tune the parameters alpha (penalty) and the number of latent factors in the matrix. We arrive at the optimal values of *alpha* and number of latent factors to be considered in the process of factorization by computing the sum of squared errors on the test set. The combinations of values and their sum of squared errors is shown in the table below.
-
-
-
-
-
-
-
-
 
 
 
@@ -1157,77 +670,6 @@ result_train.head()
 
 
 
-
-
-
-
-
-
-
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>business_id</th>
-      <th>user_id</th>
-      <th>residuals</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2721</th>
-      <td>bRmb81XDG3E2SOHARBLTog</td>
-      <td>oBc0gQ4RpFrqzpNlH6_epA</td>
-      <td>0.455356</td>
-    </tr>
-    <tr>
-      <th>39119</th>
-      <td>X_Pg8SvGGYhCxwWRkrUv3Q</td>
-      <td>dT1jqOZrFUmY4m4o37c8rw</td>
-      <td>0.279164</td>
-    </tr>
-    <tr>
-      <th>49343</th>
-      <td>8xI4hJ3nS4avEoo_l62dkw</td>
-      <td>qOdmye8UQdqloVNE059PkQ</td>
-      <td>-0.885521</td>
-    </tr>
-    <tr>
-      <th>83548</th>
-      <td>q9_gLvTNf11etVxbH7JY0Q</td>
-      <td>Jm5h-bDATqRMWs3VahkFPg</td>
-      <td>-0.403760</td>
-    </tr>
-    <tr>
-      <th>52893</th>
-      <td>J9BmILDpV1Pr3GKU9XhjTQ</td>
-      <td>Yp7_GeD6KTRoo4Nteqv4SA</td>
-      <td>0.392325</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-
-
-
 ## Other Modelling Techniques
 
 For the final stage of modelling, we sought to create a model that uses additional information about the users or restaurants provided in the dataset. We also engineered several features: day of the week the review was written, month the review was written, length of time the user was active on Yelp when review was written.
@@ -1238,25 +680,6 @@ For each of the combinations of variables below, we fit a regular regression, a 
 + Latitude and longitude, and their interaction with the state variable
 
 The output for the cross-validation exercise on the the third model, which proved to be the superior one, is displayed below.
-
-
-
-
-
-
-
-
-    Index(['business_id', 'user_id', 'residuals_from_linear_regr',
-           'residuals_from_mat_factrz', 'resid_of_resid', 'city', 'state',
-           'latitude', 'longitude'],
-          dtype='object')
-
-
-
-
-
-
-
 
 
 ```python
@@ -1307,69 +730,18 @@ The random forest regression model on latitude and longitude ultimately has an i
 
 
 
-
-
-
-
-    RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=5,
-               max_features='sqrt', max_leaf_nodes=None,
-               min_impurity_split=1e-07, min_samples_leaf=1,
-               min_samples_split=2, min_weight_fraction_leaf=0.0,
-               n_estimators=100, n_jobs=1, oob_score=False, random_state=None,
-               verbose=0, warm_start=False)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Results, Conclusions and Further Work
 
 Below we see the performance of the ensemble model on the holdout (test) dataset, as well as the training dataset.
 
-
-
-```python
-print('holdout r^2 for regression model:                                      ', r2_score(holdout_set_y, p1))
-print('holdout r^2 for regression + matrix model:                             ', r2_score(holdout_set_y, p1+p2))
-print('holdout r^2 for regression + matrix + Random Forest regression model:  ', r2_score(holdout_set_y, p1+p2+p3))
-```
+    training r^2 for regression model:                                       0.269712582918
+    training r^2 for regression + matrix model:                              0.269712582918
+    training r^2 for regression + matrix + Random Forest regression model:   0.27920343767
 
 
     holdout r^2 for regression model:                                       0.0928745193673
     holdout r^2 for regression + matrix model:                              0.0928745193673
     holdout r^2 for regression + matrix + Random Forest regression model:   0.0972615487885
-
-
-
-
-
-
-
-
-```python
-print('training r^2 for regression model:                                      ', r2_score(train_set_y, q1))
-print('training r^2 for regression + matrix model:                             ', r2_score(train_set_y, q1+q2))
-print('training r^2 for regression + matrix + Random Forest regression model:  ', r2_score(train_set_y, q1+q2+q3))
-```
-
-
-    training r^2 for regression model:                                       0.269712582918
-    training r^2 for regression + matrix model:                              0.269712582918
-    training r^2 for regression + matrix + Random Forest regression model:   0.27920343767
 
 
 As we noted earlier, the predicted residuals from the matrix factorization step do not improve the accuracy of the model, because they are practically zero.
